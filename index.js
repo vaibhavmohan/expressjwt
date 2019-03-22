@@ -1,9 +1,22 @@
+require('dotenv').config();
 var express = require('express');
 var jwt = require('jsonwebtoken');
 var bodyParser = require('body-parser');
 var mysql = require('mysql');
 var bcrypt = require('bcrypt');
 var expressValidator  = require('express-validator');
+var nodemailer = require('nodemailer');
+
+var transporter = nodemailer.createTransport({
+    host: 'smtp.gmail.com',
+    port: 587,
+    secure: false,
+    requireTLS: true,
+    auth: {
+        user: process.env.EMAIL,
+        pass: process.env.PASSWORD
+    }
+});
 
 const saltRound = 10;
 
@@ -28,6 +41,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(expressValidator());
 
+
+
+
+
 /** This is a protected route here which will require the access token */
 app.get('/api/protected', ensureToken, (req, res) => {
     jwt.verify(req.token, 'secret_key_goes_here', function(err, data) {
@@ -36,7 +53,8 @@ app.get('/api/protected', ensureToken, (req, res) => {
       } else {
         res.status(200).send({
           status: 200,
-          data: 'Protected information. Congrats!'
+          message: 'Protected information. Congrats!',
+          data: data
         });
       }
     });
@@ -53,6 +71,79 @@ app.get('/api/protected', ensureToken, (req, res) => {
       res.sendStatus(403);
     }
   }
+
+  app.post('/api/forgot-password', (req,res)=>{
+
+    req.check('email','email is invalid').isEmail();
+    // Finds the validation errors in this request and wraps them in an object with handy functions
+    var errors = req.validationErrors();
+    if(errors){
+      res.status(400).send({
+        status: 400,
+        message:errors[0].msg
+      });
+    }
+    else{
+        email = req.body.email;
+        con.query("SELECT * FROM users where email = '"+email+"' and  is_active='1' LIMIT 1", function (err, rows, fields) {
+          if (err) throw err
+        
+          if(rows.length){
+            // then return a token, secret key should be an env variable
+            let new_password = Math.random().toString(36).slice(-8);
+            let hash = bcrypt.hashSync(new_password, saltRound);
+            let updated_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
+            
+            var sql = "UPDATE users SET password = '"+hash+"',updated_at = '"+updated_at+"' WHERE id = "+rows[0].id;
+          con.query(sql, function (err, result) {
+            if (err) {
+              res.send('Something went wrong');
+            }
+            else{
+              if(result.affectedRows){
+                var mailOptions = {
+                  from: 'youremail@gmail.com',
+                  to: 'vaibhav@aeologic.com',
+                  subject: 'Password updated for your user',
+                  text: 'Password is updated your new password is '+new_password
+                };
+
+                transporter.sendMail(mailOptions, function(error, info){
+                  if (error) {
+                    res.status(400).send({
+                        status: 400,
+                        message:"Something went wrong please try again"
+                      });
+                  } else {
+                      res.status(200).send({
+                        status: 200,
+                        message: 'A New password has been sent at your mail id'
+                      });
+                  }
+                });
+              }
+              else{
+                res.status(400).send({
+                  status: 400,
+                  message:"Something went wrong"
+                });
+              }
+            }
+          });
+
+            // res.send(randomstring);
+          }
+          else{
+            res.status(400).send({
+              status: 400,
+              message:"user does not exist or is not active"
+            });
+          }
+        });
+      
+    }
+
+  });
 
   app.post('/api/register', (req,res)=>{
     var request_variables = req.body; 
