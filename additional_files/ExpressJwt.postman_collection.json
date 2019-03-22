@@ -1,0 +1,201 @@
+{
+	"id": "64f1fe50-14e5-68f7-075c-fd1990b6a115",
+	"name": "ExpressJwt",
+	"description": "",
+	"order": [
+		"f76bd2f4-4a04-8089-1076-16f62b2f2349",
+		"64d3271e-8711-bb90-5da1-853c87fc25c1",
+		"26433a24-7c69-e35d-ee30-fd6158decade",
+		"f42052c6-b826-1f3f-fb8c-b1109562826a"
+	],
+	"folders": [],
+	"folders_order": [],
+	"timestamp": 1553081555656,
+	"owner": "5570237",
+	"public": false,
+	"requests": [
+		{
+			"id": "26433a24-7c69-e35d-ee30-fd6158decade",
+			"headers": "//Content-Type: application/x-www-form-urlencoded\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/x-www-form-urlencoded",
+					"description": "",
+					"enabled": false
+				}
+			],
+			"url": "http://localhost:3000/api/register",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [
+				{
+					"key": "email",
+					"value": "vaibhav@aeologic.com",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "password",
+					"value": "admin@1234",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "confirm_password",
+					"value": "admin@1234",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "urlencoded",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1553256545678,
+			"name": "Express jwt register",
+			"description": "",
+			"collectionId": "64f1fe50-14e5-68f7-075c-fd1990b6a115",
+			"responses": []
+		},
+		{
+			"id": "64d3271e-8711-bb90-5da1-853c87fc25c1",
+			"headers": "Authorization: bearer bhjhkjhkjhuiyuiy7897897kjhkjy87897987897897897\n",
+			"headerData": [
+				{
+					"key": "Authorization",
+					"value": "bearer bhjhkjhkjhuiyuiy7897897kjhkjy87897987897897897",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:3000/api/protected",
+			"queryParams": [],
+			"pathVariables": {},
+			"pathVariableData": [],
+			"preRequestScript": null,
+			"method": "GET",
+			"collectionId": "64f1fe50-14e5-68f7-075c-fd1990b6a115",
+			"data": null,
+			"dataMode": "params",
+			"name": "Express jwt protected",
+			"description": "",
+			"descriptionFormat": "html",
+			"time": 1553082914554,
+			"version": 2,
+			"responses": [],
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {}
+		},
+		{
+			"id": "f42052c6-b826-1f3f-fb8c-b1109562826a",
+			"headers": "Content-Type: application/x-www-form-urlencoded\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/x-www-form-urlencoded",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:3000/api/change-password",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [
+				{
+					"key": "email",
+					"value": "vaibhav@aeologic.com",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "password",
+					"value": "admin",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "confirm_password",
+					"value": "admin",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "new_password",
+					"value": "admin",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "urlencoded",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1553260285319,
+			"name": "Express jwt change password",
+			"description": "",
+			"collectionId": "64f1fe50-14e5-68f7-075c-fd1990b6a115",
+			"responses": []
+		},
+		{
+			"id": "f76bd2f4-4a04-8089-1076-16f62b2f2349",
+			"headers": "Content-Type: application/x-www-form-urlencoded\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/x-www-form-urlencoded",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:3000/api/login",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [
+				{
+					"key": "email",
+					"value": "vaibhav@aeologic.com",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "password",
+					"value": "admin@1234",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "urlencoded",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1553257377771,
+			"name": "Express jwt login",
+			"description": "",
+			"collectionId": "64f1fe50-14e5-68f7-075c-fd1990b6a115",
+			"responses": []
+		}
+	]
+}
