@@ -81,9 +81,11 @@ app.get('/api/protected', ensureToken, (req, res) => {
       // bcrypt.hash(password, saltRound, function(err, hash) {
 
         let hash = bcrypt.hashSync(password, saltRound);
+        let created_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
+        let updated_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
         // Store hash in your password DB.
-        var sql = "INSERT INTO users (email, password,is_active) VALUES ('"+email+"', '"+hash+"', '0')";
+        var sql = "INSERT INTO users (email, password,is_active,created_at,updated_at) VALUES ('"+email+"', '"+hash+"', '0','"+created_at+"','"+updated_at+"')";
         con.query(sql, function (err, result) {
           // if (err) throw err;
           if(err){
@@ -168,8 +170,9 @@ app.post('/api/login', (req, res) => {
         if(bcrypt.compareSync(password, rows[0].password)) {
          
           let hash = bcrypt.hashSync(new_password, saltRound);
+          let updated_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
           
-          var sql = "UPDATE users SET password = '"+hash+"' WHERE id = "+rows[0].id;
+          var sql = "UPDATE users SET password = '"+hash+"',updated_at = '"+updated_at+"' WHERE id = "+rows[0].id;
           con.query(sql, function (err, result) {
             if (err) {
               res.send('Something went wrong');
