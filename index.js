@@ -97,37 +97,24 @@ app.get('/api/protected', ensureToken, (req, res) => {
             res.send("Something went wrong");
           }
         });
-      // });
-    // });
-      // res.send(sql);
     }
-
-    // if (errors) {
-    //   return res.status(422).json({ errors: errors.array() });
-    // }
-    
-    
-
   });
 
 
 app.post('/api/login', (req, res) => {
     var email = req.body.email;
     var password = req.body.password;
-    // res.send(req.body);
-    // insert code here to actually authenticate, or fake it
-    // const user = { id: 3 };
-    
-    // var hash = bcrypt.hashSync(password, saltRound);
-    // res.send(hash);
-    // bcrypt.compareSync(password, hash);
+    // username must be an email
+    req.check('email','email is invalid').isEmail();
+    // password must be at least 5 chars long password and confirm password must match
+    req.check('password',"must be more than 5 characters and match the confirm password").isLength({ min: 5 });
 
-    // bcrypt.compare(password, hash, function(err, res) {
-    //   res.send(res); 
-    //   // res == true
-    // });
-
-    // res.send(con);
+    // Finds the validation errors in this request and wraps them in an object with handy functions
+    var errors = req.validationErrors();
+    if(errors){
+      res.send(errors);
+    }
+    else{
     con.query("SELECT * FROM users where email = '"+email+"' and  is_active='1' LIMIT 1", function (err, rows, fields) {
       if (err) throw err
     
@@ -150,9 +137,65 @@ app.post('/api/login', (req, res) => {
       else{
         res.send("user does not exist or is not active");
       }
+    });
+  }
+    // res.send("email is :"+request_variables.email+" and password is : "+request_variables.password);
+    // res.send("recieved your request!");
+  });
 
+  app.post('/api/change-password', (req, res) => {
+    var email = req.body.email;
+    var password = req.body.password;
+    var confirm_password = req.body.confirm_password;
+    var new_password = req.body.new_password;
+    // username must be an email
+    req.check('email','email is invalid').isEmail();
+    // password must be at least 5 chars long password and confirm password must match
+    req.check('password',"must be more than 5 characters and match the confirm password").isLength({ min: 5 }).equals(confirm_password);
+    req.check('new_password',"New Password must be more than 5 characters").isLength({ min: 5 });
+    // Finds the validation errors in this request and wraps them in an object with handy functions
+    var errors = req.validationErrors();
+    if(errors){
+      res.send(errors);
+    }
+    else{
+    con.query("SELECT * FROM users where email = '"+email+"' and  is_active='1' LIMIT 1", function (err, rows, fields) {
+      if (err) throw err
+    
+      if(rows.length){
+        // then return a token, secret key should be an env variable
+        
+        if(bcrypt.compareSync(password, rows[0].password)) {
+         
+          let hash = bcrypt.hashSync(new_password, saltRound);
+          
+          var sql = "UPDATE users SET password = '"+hash+"' WHERE id = "+rows[0].id;
+          con.query(sql, function (err, result) {
+            if (err) {
+              res.send('Something went wrong');
+            }
+            else{
+              if(result.affectedRows){
+                res.send('Password is updated');
+              }
+              else{
+                res.send('Something went wrong');
+              }
+            }
+          });
+
+        } else {
+          // Passwords don't match
+          res.send('password dont match');
+         }
+
+      }
+      else{
+        res.send("user does not exist or is not active");
+      }
 
     });
+  }
 
 
     // res.send("email is :"+request_variables.email+" and password is : "+request_variables.password);
