@@ -28,20 +28,15 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(expressValidator());
 
-
-app.get('/api',function(req,res){
-    res.json({
-        text:'my-api'
-    });
-});
-
+/** This is a protected route here which will require the access token */
 app.get('/api/protected', ensureToken, (req, res) => {
     jwt.verify(req.token, 'secret_key_goes_here', function(err, data) {
       if (err) {
         res.sendStatus(403);
       } else {
-        res.json({
-          description: 'Protected information. Congrats!'
+        res.status(200).send({
+          status: 200,
+          data: 'Protected information. Congrats!'
         });
       }
     });
@@ -70,7 +65,10 @@ app.get('/api/protected', ensureToken, (req, res) => {
     // Finds the validation errors in this request and wraps them in an object with handy functions
     var errors = req.validationErrors();
     if(errors){
-      res.send(errors);
+      res.status(400).send({
+        status: 400,
+        message:errors[0].msg
+      });
     }
     else{
       var email = request_variables.email;
@@ -89,14 +87,23 @@ app.get('/api/protected', ensureToken, (req, res) => {
         con.query(sql, function (err, result) {
           // if (err) throw err;
           if(err){
-            res.send("Something went wrong");
+            res.status(400).send({
+              status: 400,
+              message:"Something went wrong"
+            });
           }
           console.log(result.insertId);
           if(result.insertId){
-            res.send("1 record inserted insert Id: "+result.insertId);
+            res.status(200).send({
+              status: 200,
+              data: "1 record inserted insert Id: "+result.insertId
+            });
           }
           else{          
-            res.send("Something went wrong");
+            res.status(400).send({
+              status: 400,
+              message:"Something went wrong"
+            });
           }
         });
     }
@@ -114,7 +121,10 @@ app.post('/api/login', (req, res) => {
     // Finds the validation errors in this request and wraps them in an object with handy functions
     var errors = req.validationErrors();
     if(errors){
-      res.send(errors);
+      res.status(400).send({
+        status: 400,
+        message:errors[0].msg
+      });
     }
     else{
     con.query("SELECT * FROM users where email = '"+email+"' and  is_active='1' LIMIT 1", function (err, rows, fields) {
@@ -126,18 +136,25 @@ app.post('/api/login', (req, res) => {
         if(bcrypt.compareSync(password, rows[0].password)) {
           // res.send('password match');
           const token = jwt.sign({ user: rows[0].id }, 'secret_key_goes_here');
-          res.json({
+          res.status(200).send({
+            status: 200,
             message: 'Authenticated! Use this token in the "Authorization" header',
             token: token
           });
         } else {
           // Passwords don't match
-          res.send('password dont match');
+          res.status(400).send({
+            status: 400,
+            message:"password dont match"
+          });
          }
 
       }
       else{
-        res.send("user does not exist or is not active");
+        res.status(400).send({
+          status: 400,
+          message:"user does not exist or is not active"
+        });
       }
     });
   }
@@ -158,11 +175,19 @@ app.post('/api/login', (req, res) => {
     // Finds the validation errors in this request and wraps them in an object with handy functions
     var errors = req.validationErrors();
     if(errors){
-      res.send(errors);
+      res.status(400).send({
+        status: 400,
+        message:errors[0].msg
+      });
     }
     else{
     con.query("SELECT * FROM users where email = '"+email+"' and  is_active='1' LIMIT 1", function (err, rows, fields) {
-      if (err) throw err
+      if (err) {
+        res.status(400).send({
+          status: 400,
+          message:err
+        });
+      }
     
       if(rows.length){
         // then return a token, secret key should be an env variable
@@ -179,22 +204,34 @@ app.post('/api/login', (req, res) => {
             }
             else{
               if(result.affectedRows){
-                res.send('Password is updated');
+                res.status(200).send({
+                  status: 200,
+                  message: 'Password is updated'
+                });
               }
               else{
-                res.send('Something went wrong');
+                res.status(400).send({
+                  status: 400,
+                  message:"Something went wrong"
+                });
               }
             }
           });
 
         } else {
           // Passwords don't match
-          res.send('password dont match');
+          res.status(400).send({
+            status: 400,
+            message:"password dont match"
+          });
          }
 
       }
       else{
-        res.send("user does not exist or is not active");
+        res.status(400).send({
+          status: 400,
+          message:"user does not exist or is not active"
+        });
       }
 
     });
