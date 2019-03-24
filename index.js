@@ -14,7 +14,7 @@ var transporter = nodemailer.createTransport({
     requireTLS: true,
     auth: {
         user: process.env.EMAIL,
-        pass: process.env.PASSWORD
+        pass: process.env.EMAILPASSWORD
     }
 });
 
@@ -22,10 +22,10 @@ const saltRound = 10;
 
 /** Create a mysql connection */
 var con = mysql.createConnection({
-  host: process.env.HOST,
-  user: process.env.USERNAME,
-  password: process.env.PASSWORD,
-  database: process.env.DATABASE
+  host: process.env.DB_HOST,
+  user: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE
 });
 
 con.connect();
@@ -47,7 +47,7 @@ app.use(expressValidator());
 
 /** This is a protected route here which will require the access token */
 app.get('/api/protected', ensureToken, (req, res) => {
-    jwt.verify(req.token, 'secret_key_goes_here', function(err, data) {
+    jwt.verify(req.token, process.env.JWT_SECRET_KEY, function(err, data) {
       if (err) {
         res.sendStatus(403);
       } else {
@@ -73,7 +73,6 @@ app.get('/api/protected', ensureToken, (req, res) => {
   }
 
   app.post('/api/forgot-password', (req,res)=>{
-
     req.check('email','email is invalid').isEmail();
     // Finds the validation errors in this request and wraps them in an object with handy functions
     var errors = req.validationErrors();
@@ -85,7 +84,7 @@ app.get('/api/protected', ensureToken, (req, res) => {
     }
     else{
         email = req.body.email;
-        con.query("SELECT * FROM users where email = '"+email+"' and  is_active='1' LIMIT 1", function (err, rows, fields) {
+        con.query("SELECT * FROM users where email = ? and  is_active=? LIMIT 1",[email,'1'], function (err, rows, fields) {
           if (err) throw err
         
           if(rows.length){
@@ -102,7 +101,7 @@ app.get('/api/protected', ensureToken, (req, res) => {
             else{
               if(result.affectedRows){
                 var mailOptions = {
-                  from: 'youremail@gmail.com',
+                  from: 'vaibhavmohan222@gmail.com',
                   to: 'vaibhav@aeologic.com',
                   subject: 'Password updated for your user',
                   text: 'Password is updated your new password is '+new_password
@@ -145,6 +144,62 @@ app.get('/api/protected', ensureToken, (req, res) => {
 
   });
 
+  app.post('/api/edit-user', ensureToken, (req,res)=>{
+    jwt.verify(req.token, process.env.JWT_SECRET_KEY, function(err, data) {
+      if (err) {
+        res.sendStatus(403);
+      } else {
+        // var request_variables = req.body; 
+        var email = req.body.email;
+        var username = req.body.username;
+
+        // username must be an email
+        req.check('email','email is invalid').isEmail();
+        req.check('username',"must be more than 5 characters").isLength({ min: 5 });
+
+        // Finds the validation errors in this request and wraps them in an object with handy functions
+        var errors = req.validationErrors();
+        if(errors){
+          res.status(400).send({
+            status: 400,
+            message:errors[0].msg
+          });
+        }
+        else{
+          let updated_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
+
+          // Store hash in your password DB.
+          
+          con.query("Update users SET email = ? ,username = ?, updated_at = ? where id = ?" , [email,username,updated_at,data.user], function (err, result) {
+            // if (err) throw err;
+            if(err){
+              res.status(400).send({
+                status: 400,
+                message:"Something went wrong",
+                error:err
+              });
+            }
+            // console.log(result);
+            if(result.affectedRows){
+              res.status(200).send({
+                status: 200,
+                message: "record Updated"
+              });
+            }
+            else{          
+              res.status(400).send({
+                status: 400,
+                message:"Something went wrong 2",
+                error:err
+              });
+            }
+          });
+        }
+      }
+    });
+  }); 
+
+
   app.post('/api/register', (req,res)=>{
     var request_variables = req.body; 
     
@@ -152,6 +207,7 @@ app.get('/api/protected', ensureToken, (req, res) => {
     req.check('email','email is invalid').isEmail();
     // password must be at least 5 chars long password and confirm password must match
     req.check('password',"must be more than 5 characters and match the confirm password").isLength({ min: 5 }).equals(request_variables.confirm_password);
+    req.check('username',"must be more than 5 characters").isLength({ min: 5 });
 
     // Finds the validation errors in this request and wraps them in an object with handy functions
     var errors = req.validationErrors();
@@ -164,6 +220,7 @@ app.get('/api/protected', ensureToken, (req, res) => {
     else{
       var email = request_variables.email;
       var password = request_variables.password;
+      var username = request_variables.username;
 
     // bcrypt.genSalt(saltRound,function(err,salt){
       // if(err) throw err;
@@ -174,7 +231,7 @@ app.get('/api/protected', ensureToken, (req, res) => {
         let updated_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
         // Store hash in your password DB.
-        var sql = "INSERT INTO users (email, password,is_active,created_at,updated_at) VALUES ('"+email+"', '"+hash+"', '0','"+created_at+"','"+updated_at+"')";
+        var sql = "INSERT INTO users (email, username, password,is_active,created_at,updated_at) VALUES ('"+email+"','"+username+"', '"+hash+"', '0','"+created_at+"','"+updated_at+"')";
         con.query(sql, function (err, result) {
           // if (err) throw err;
           if(err){
@@ -226,7 +283,7 @@ app.post('/api/login', (req, res) => {
         
         if(bcrypt.compareSync(password, rows[0].password)) {
           // res.send('password match');
-          const token = jwt.sign({ user: rows[0].id }, 'secret_key_goes_here');
+          const token = jwt.sign({ user: rows[0].id }, process.env.JWT_SECRET_KEY);
           res.status(200).send({
             status: 200,
             message: 'Authenticated! Use this token in the "Authorization" header',

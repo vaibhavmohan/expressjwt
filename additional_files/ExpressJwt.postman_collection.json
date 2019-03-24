@@ -6,7 +6,9 @@
 		"f76bd2f4-4a04-8089-1076-16f62b2f2349",
 		"64d3271e-8711-bb90-5da1-853c87fc25c1",
 		"26433a24-7c69-e35d-ee30-fd6158decade",
-		"f42052c6-b826-1f3f-fb8c-b1109562826a"
+		"f42052c6-b826-1f3f-fb8c-b1109562826a",
+		"c89e4771-5bf4-52c3-abfb-9eae69405838",
+		"4675298e-a11d-30be-543f-37197ff6874d"
 	],
 	"folders": [],
 	"folders_order": [],
@@ -52,6 +54,13 @@
 					"description": "",
 					"type": "text",
 					"enabled": true
+				},
+				{
+					"key": "username",
+					"value": "vaibhav",
+					"description": "",
+					"type": "text",
+					"enabled": true
 				}
 			],
 			"dataMode": "urlencoded",
@@ -59,41 +68,127 @@
 			"tests": null,
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1553256545678,
+			"time": 1553429732244,
 			"name": "Express jwt register",
 			"description": "",
 			"collectionId": "64f1fe50-14e5-68f7-075c-fd1990b6a115",
 			"responses": []
 		},
 		{
+			"id": "4675298e-a11d-30be-543f-37197ff6874d",
+			"headers": "Content-Type: application/x-www-form-urlencoded\nAuthorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoyLCJpYXQiOjE1NTM0Mjk2ODB9.ixg3HOK6j_NEK4z4C_5QP4hoxoo9tcnFTllCGhGEV04\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/x-www-form-urlencoded",
+					"description": "",
+					"enabled": true
+				},
+				{
+					"key": "Authorization",
+					"value": "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoyLCJpYXQiOjE1NTM0Mjk2ODB9.ixg3HOK6j_NEK4z4C_5QP4hoxoo9tcnFTllCGhGEV04",
+					"description": "",
+					"enabled": true
+				}
+			],
+			"url": "http://localhost:3000/api/edit-user",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [
+				{
+					"key": "email",
+					"value": "vaibhav@aeologic.com",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				},
+				{
+					"key": "username",
+					"value": "vaibhav",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "urlencoded",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1553429740692,
+			"name": "Express jwt edit user",
+			"description": "",
+			"collectionId": "64f1fe50-14e5-68f7-075c-fd1990b6a115",
+			"responses": []
+		},
+		{
 			"id": "64d3271e-8711-bb90-5da1-853c87fc25c1",
-			"headers": "Authorization: bearer bhjhkjhkjhuiyuiy7897897kjhkjy87897987897897897\n",
+			"headers": "Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoyMCwiaWF0IjoxNTUzMjc2MDQ2fQ.6POtJQvvtZMbW24XaJH47fJW_vRpD2Dkj5iZax9pFiA\n",
 			"headerData": [
 				{
 					"key": "Authorization",
-					"value": "bearer bhjhkjhkjhuiyuiy7897897kjhkjy87897987897897897",
+					"value": "bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoyMCwiaWF0IjoxNTUzMjc2MDQ2fQ.6POtJQvvtZMbW24XaJH47fJW_vRpD2Dkj5iZax9pFiA",
 					"description": "",
 					"enabled": true
 				}
 			],
 			"url": "http://localhost:3000/api/protected",
 			"queryParams": [],
+			"preRequestScript": null,
 			"pathVariables": {},
 			"pathVariableData": [],
-			"preRequestScript": null,
 			"method": "GET",
-			"collectionId": "64f1fe50-14e5-68f7-075c-fd1990b6a115",
 			"data": null,
 			"dataMode": "params",
-			"name": "Express jwt protected",
-			"description": "",
-			"descriptionFormat": "html",
-			"time": 1553082914554,
 			"version": 2,
-			"responses": [],
 			"tests": null,
 			"currentHelper": "normal",
-			"helperAttributes": {}
+			"helperAttributes": {},
+			"time": 1553429730439,
+			"name": "Express jwt protected",
+			"description": "",
+			"collectionId": "64f1fe50-14e5-68f7-075c-fd1990b6a115",
+			"responses": []
+		},
+		{
+			"id": "c89e4771-5bf4-52c3-abfb-9eae69405838",
+			"headers": "//Content-Type: application/x-www-form-urlencoded\n",
+			"headerData": [
+				{
+					"key": "Content-Type",
+					"value": "application/x-www-form-urlencoded",
+					"description": "",
+					"enabled": false
+				}
+			],
+			"url": "http://localhost:3000/api/forgot-password",
+			"queryParams": [],
+			"preRequestScript": null,
+			"pathVariables": {},
+			"pathVariableData": [],
+			"method": "POST",
+			"data": [
+				{
+					"key": "email",
+					"value": "vaibhav@aeologic.com",
+					"description": "",
+					"type": "text",
+					"enabled": true
+				}
+			],
+			"dataMode": "urlencoded",
+			"version": 2,
+			"tests": null,
+			"currentHelper": "normal",
+			"helperAttributes": {},
+			"time": 1553429735333,
+			"name": "Express jwt forgot password",
+			"description": "",
+			"collectionId": "64f1fe50-14e5-68f7-075c-fd1990b6a115",
+			"responses": []
 		},
 		{
 			"id": "f42052c6-b826-1f3f-fb8c-b1109562826a",
@@ -115,21 +210,21 @@
 			"data": [
 				{
 					"key": "email",
-					"value": "vaibhav@aeologic.com",
+					"value": "vaibhav@gmail.com",
 					"description": "",
 					"type": "text",
 					"enabled": true
 				},
 				{
 					"key": "password",
-					"value": "admin",
+					"value": "admin@1234",
 					"description": "",
 					"type": "text",
 					"enabled": true
 				},
 				{
 					"key": "confirm_password",
-					"value": "admin",
+					"value": "admin@1234",
 					"description": "",
 					"type": "text",
 					"enabled": true
@@ -147,7 +242,7 @@
 			"tests": null,
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1553260285319,
+			"time": 1553429733895,
 			"name": "Express jwt change password",
 			"description": "",
 			"collectionId": "64f1fe50-14e5-68f7-075c-fd1990b6a115",
@@ -180,7 +275,7 @@
 				},
 				{
 					"key": "password",
-					"value": "admin@1234",
+					"value": "4zslep7k",
 					"description": "",
 					"type": "text",
 					"enabled": true
@@ -191,7 +286,7 @@
 			"tests": null,
 			"currentHelper": "normal",
 			"helperAttributes": {},
-			"time": 1553257377771,
+			"time": 1553429727390,
 			"name": "Express jwt login",
 			"description": "",
 			"collectionId": "64f1fe50-14e5-68f7-075c-fd1990b6a115",
