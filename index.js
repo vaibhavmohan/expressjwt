@@ -6,6 +6,8 @@ var mysql = require('mysql');
 var bcrypt = require('bcrypt');
 var expressValidator  = require('express-validator');
 var nodemailer = require('nodemailer');
+var isBase64 = require('is-base64');
+var filesystem = require("fs");
 
 var transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
@@ -152,6 +154,7 @@ app.get('/api/protected', ensureToken, (req, res) => {
         // var request_variables = req.body; 
         var email = req.body.email;
         var username = req.body.username;
+        var userimage = req.body.userimage;
 
         // username must be an email
         req.check('email','email is invalid').isEmail();
@@ -169,8 +172,56 @@ app.get('/api/protected', ensureToken, (req, res) => {
           let updated_at = new Date().toISOString().slice(0, 19).replace('T', ' ');
 
           // Store hash in your password DB.
-          
-          con.query("Update users SET email = ? ,username = ?, updated_at = ? where id = ?" , [email,username,updated_at,data.user], function (err, result) {
+          if(userimage != undefined && userimage != ""){
+            
+            if(isBase64(userimage, {mime: true})){
+              var image_path = "./public/images/"+data.user+"/";
+              if (!filesystem.existsSync(image_path)){
+                filesystem.mkdirSync(image_path);
+              }
+
+              var image_name = Math.random().toString(36).substr(2, 11) + data.user ;
+              var imageExtention = userimage.split(';')[0].split('/')[1];
+              var image_full_path =  image_path+image_name+'.'+imageExtention;
+
+              var query = "Update users SET email = ? , image = ?,  username = ?, updated_at = ? where id = ?";
+              var paramarray = [email,image_full_path,username,updated_at,data.user];
+              var allowed_image_extention = ['png','jpg','jpeg','gif'];
+  
+              var base64Data = userimage.replace(/^data:image\/png;base64,/, "");
+
+              if(allowed_image_extention.includes(imageExtention)){
+                filesystem.writeFile(image_full_path, base64Data, 'base64', function(err) {
+                  if(err){
+                    res.status(400).send({
+                      status: 400,
+                      message:"Something went wrong",
+                      error:err
+                    });
+                  }
+                });
+              }
+              else{
+                res.status(400).send({
+                  status: 400,
+                  message:"Image Extention not allowed"
+                });
+              }
+            }
+            else{
+              res.status(400).send({
+                status: 400,
+                message:"Wrong base64 Value"
+              });
+            }
+
+            
+          }
+          else{
+            var query = "Update users SET email = ? ,username = ?, updated_at = ? where id = ?";
+            var paramarray = [email,username,updated_at,data.user];
+          }
+          con.query(query , paramarray, function (err, result) {
             // if (err) throw err;
             if(err){
               res.status(400).send({
