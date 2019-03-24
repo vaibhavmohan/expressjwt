@@ -22,10 +22,10 @@ const saltRound = 10;
 
 /** Create a mysql connection */
 var con = mysql.createConnection({
-  host: "localhost",
-  user: "vaibhav",
-  password: "password",
-  database: "testing_express_jwt"
+  host: process.env.HOST,
+  user: process.env.USERNAME,
+  password: process.env.PASSWORD,
+  database: process.env.DATABASE
 });
 
 con.connect();
