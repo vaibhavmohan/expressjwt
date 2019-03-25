@@ -2,12 +2,15 @@ require('dotenv').config();
 var express = require('express');
 var jwt = require('jsonwebtoken');
 var bodyParser = require('body-parser');
-var mysql = require('mysql');
+// var mysql = require('mysql');
 var bcrypt = require('bcrypt');
 var expressValidator  = require('express-validator');
 var nodemailer = require('nodemailer');
 var isBase64 = require('is-base64');
 var filesystem = require("fs");
+
+
+var con = require('./includes/db');
 
 var transporter = nodemailer.createTransport({
     host: 'smtp.gmail.com',
@@ -23,6 +26,7 @@ var transporter = nodemailer.createTransport({
 const saltRound = 10;
 
 /** Create a mysql connection */
+/*
 var con = mysql.createConnection({
   host: process.env.DB_HOST,
   user: process.env.DB_USERNAME,
@@ -31,6 +35,8 @@ var con = mysql.createConnection({
 });
 
 con.connect();
+*/
+
 
 const app = express();
 
@@ -103,7 +109,7 @@ app.get('/api/protected', ensureToken, (req, res) => {
             else{
               if(result.affectedRows){
                 var mailOptions = {
-                  from: 'vaibhavmohan222@gmail.com',
+                  from: process.env.EMAIL,
                   to: 'vaibhav@aeologic.com',
                   subject: 'Password updated for your user',
                   text: 'Password is updated your new password is '+new_password
